@@ -1,0 +1,36 @@
+# Terraform dir
+**/.terraform/*
+*.lock.hcl
+# Terraform .tfstate files
+*.tfstate
+*.tfstate.*
+terraform.tfstate
+terraform.tfstate.*
+# Crash log files
+*.log
+# Ignore any .tfvars files that are automatically generated
+*.tfvars
+# Ignore override files as they are usually used to override resources locally and so are not checked in
+*.override.tf
+*.override.tf.json
+*.override
+# Ignore CLI configuration files
+.terraformrc
+terraform.rc
+# Ignore Visual Studio Code files
+.vscode
+# Ignore Sublime Text files
+*.sublime-*
+# Ignore Emacs editor files
+*~
+# Ignore temporary files
+*.swp
+*.swo
+*.swx
+# Ignore OS-generated files
+.DS_Store
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db

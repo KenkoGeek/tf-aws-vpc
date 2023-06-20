@@ -1,0 +1,52 @@
+# .terraform-docs.yml
+content: |-
+  {{ .Header }}
+  
+  # Preparing the environment
+
+  1. Clone the repository using `git`
+  ```bash
+  git clone the-repository/project
+  ```
+  2. Change to the project directory
+  ```bash
+  cd project/
+  ```
+  3. Init the Terraform project
+  ```bash
+  terraform init
+  ```
+  4. Validate the configurations files
+   ```bash
+  terraform validate
+  ``` 
+  5. Lint the project
+  
+  Installation guide for tflint -> https://github.com/terraform-linters/tflint
+  ```bash
+  tflint
+  ```
+  6. Validate for security best practices
+  
+  Installation guide for tfsec -> https://aquasecurity.github.io/tfsec/v1.28.1/guides/installation/
+  ```bash
+  tfsec
+  ```
+  7. Give some format (just in case)
+  ```bash
+  terraform fmt
+  ```
+
+  {{ .Providers }}
+
+  {{ .Requirements }}
+
+  {{ .Modules }}
+
+  {{ .Resources }}
+
+  {{ .Inputs }}
+
+  {{ .Outputs }}
+
+  {{ .Footer }}
