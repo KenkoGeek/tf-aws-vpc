@@ -45,8 +45,8 @@ terraform fmt
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | = 1.5.0 |
-| <a name="requirement_aws"></a> [aws](#requirement\_aws) | = 5.3.0 |
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | ~> 1.5.0 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 5.3.0 |
 
 ## Modules
 
@@ -56,36 +56,35 @@ No modules.
 
 | Name | Type |
 |------|------|
-| [aws_cloudwatch_log_group.flowlogs_log_group](https://registry.terraform.io/providers/hashicorp/aws/5.3.0/docs/resources/cloudwatch_log_group) | resource |
-| [aws_ec2_transit_gateway_vpc_attachment.vpc_attachment](https://registry.terraform.io/providers/hashicorp/aws/5.3.0/docs/resources/ec2_transit_gateway_vpc_attachment) | resource |
-| [aws_eip.nat_eip](https://registry.terraform.io/providers/hashicorp/aws/5.3.0/docs/resources/eip) | resource |
-| [aws_flow_log.flowlogs](https://registry.terraform.io/providers/hashicorp/aws/5.3.0/docs/resources/flow_log) | resource |
-| [aws_iam_role.flowlogs_role](https://registry.terraform.io/providers/hashicorp/aws/5.3.0/docs/resources/iam_role) | resource |
-| [aws_internet_gateway.igw](https://registry.terraform.io/providers/hashicorp/aws/5.3.0/docs/resources/internet_gateway) | resource |
-| [aws_kms_key.flowlogs_kms_key](https://registry.terraform.io/providers/hashicorp/aws/5.3.0/docs/resources/kms_key) | resource |
-| [aws_nat_gateway.nat_gateway](https://registry.terraform.io/providers/hashicorp/aws/5.3.0/docs/resources/nat_gateway) | resource |
-| [aws_route_table.private](https://registry.terraform.io/providers/hashicorp/aws/5.3.0/docs/resources/route_table) | resource |
-| [aws_route_table.public](https://registry.terraform.io/providers/hashicorp/aws/5.3.0/docs/resources/route_table) | resource |
-| [aws_route_table_association.private_subnet_association](https://registry.terraform.io/providers/hashicorp/aws/5.3.0/docs/resources/route_table_association) | resource |
-| [aws_route_table_association.public_subnet_association](https://registry.terraform.io/providers/hashicorp/aws/5.3.0/docs/resources/route_table_association) | resource |
-| [aws_security_group.vpc_endpoint_sg](https://registry.terraform.io/providers/hashicorp/aws/5.3.0/docs/resources/security_group) | resource |
-| [aws_subnet.private](https://registry.terraform.io/providers/hashicorp/aws/5.3.0/docs/resources/subnet) | resource |
-| [aws_subnet.public](https://registry.terraform.io/providers/hashicorp/aws/5.3.0/docs/resources/subnet) | resource |
-| [aws_vpc.main](https://registry.terraform.io/providers/hashicorp/aws/5.3.0/docs/resources/vpc) | resource |
-| [aws_vpc_endpoint.dynamodb_vpc_endpoint](https://registry.terraform.io/providers/hashicorp/aws/5.3.0/docs/resources/vpc_endpoint) | resource |
-| [aws_vpc_endpoint.ec2_vpc_endpoint](https://registry.terraform.io/providers/hashicorp/aws/5.3.0/docs/resources/vpc_endpoint) | resource |
-| [aws_vpc_endpoint.s3_vpc_endpoint](https://registry.terraform.io/providers/hashicorp/aws/5.3.0/docs/resources/vpc_endpoint) | resource |
-| [aws_vpc_endpoint.ssm_vpc_endpoint](https://registry.terraform.io/providers/hashicorp/aws/5.3.0/docs/resources/vpc_endpoint) | resource |
-| [aws_vpc_endpoint.ssmmessages_vpc_endpoint](https://registry.terraform.io/providers/hashicorp/aws/5.3.0/docs/resources/vpc_endpoint) | resource |
-| [aws_availability_zones.available](https://registry.terraform.io/providers/hashicorp/aws/5.3.0/docs/data-sources/availability_zones) | data source |
-| [aws_caller_identity.current](https://registry.terraform.io/providers/hashicorp/aws/5.3.0/docs/data-sources/caller_identity) | data source |
+| [aws_cloudwatch_log_group.flowlogs_log_group](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_log_group) | resource |
+| [aws_ec2_transit_gateway_vpc_attachment.vpc_attachment](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ec2_transit_gateway_vpc_attachment) | resource |
+| [aws_eip.nat_eip](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/eip) | resource |
+| [aws_flow_log.flowlogs](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/flow_log) | resource |
+| [aws_iam_role.flowlogs_role](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
+| [aws_internet_gateway.igw](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/internet_gateway) | resource |
+| [aws_kms_key.flowlogs_kms_key](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/kms_key) | resource |
+| [aws_nat_gateway.nat_gateway](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/nat_gateway) | resource |
+| [aws_route_table.private](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/route_table) | resource |
+| [aws_route_table.public](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/route_table) | resource |
+| [aws_route_table_association.private_subnet_association](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/route_table_association) | resource |
+| [aws_route_table_association.public_subnet_association](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/route_table_association) | resource |
+| [aws_security_group.vpc_endpoint_sg](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group) | resource |
+| [aws_subnet.private](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/subnet) | resource |
+| [aws_subnet.public](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/subnet) | resource |
+| [aws_vpc.main](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc) | resource |
+| [aws_vpc_endpoint.dynamodb_vpc_endpoint](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc_endpoint) | resource |
+| [aws_vpc_endpoint.ec2_vpc_endpoint](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc_endpoint) | resource |
+| [aws_vpc_endpoint.s3_vpc_endpoint](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc_endpoint) | resource |
+| [aws_vpc_endpoint.ssm_vpc_endpoint](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc_endpoint) | resource |
+| [aws_vpc_endpoint.ssmmessages_vpc_endpoint](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc_endpoint) | resource |
+| [aws_availability_zones.available](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/availability_zones) | data source |
+| [aws_caller_identity.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/caller_identity) | data source |
 
 ## Inputs
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_additional_cidrs"></a> [additional\_cidrs](#input\_additional\_cidrs) | Additional CIDR blocks for routing (comma-separated) | `string` | `""` | no |
-| <a name="input_app_layers"></a> [app\_layers](#input\_app\_layers) | Number of application layers | `number` | `2` | no |
 | <a name="input_aws_region"></a> [aws\_region](#input\_aws\_region) | AWS region where the EC2 instance will be deployed | `string` | `"us-east-1"` | no |
 | <a name="input_az_count"></a> [az\_count](#input\_az\_count) | Number of availability zones | `number` | `2` | no |
 | <a name="input_dynamodb_vpc_endpoint_enabled"></a> [dynamodb\_vpc\_endpoint\_enabled](#input\_dynamodb\_vpc\_endpoint\_enabled) | Flag to enable/disable DynamoDB VPC Endpoint | `bool` | `true` | no |

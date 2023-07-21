@@ -20,7 +20,7 @@ output "public_subnet_cidrs" {
 
 output "private_subnet_ids" {
   value = flatten([
-    for i in range(var.app_layers) : [
+    for i in range(local.app_layers) : [
       for j in range(var.az_count) : {
         layer_name = element(var.layer_names, i)
         subnet_id  = aws_subnet.private[i * var.az_count + j].id
@@ -32,7 +32,7 @@ output "private_subnet_ids" {
 
 output "private_subnets_cidr" {
   value = flatten([
-    for i in range(var.app_layers) : [
+    for i in range(local.app_layers) : [
       for j in range(var.az_count) : {
         layer_name = element(var.layer_names, i)
         cidr       = aws_subnet.private[i * var.az_count + j].cidr_block

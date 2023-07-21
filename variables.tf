@@ -48,12 +48,6 @@ variable "az_count" {
   }
 }
 
-variable "app_layers" {
-  description = "Number of application layers"
-  type        = number
-  default     = 2
-}
-
 variable "layer_names" {
   description = "Names for each application layer"
   type        = list(string)

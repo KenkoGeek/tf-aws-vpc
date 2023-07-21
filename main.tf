@@ -27,6 +27,7 @@ resource "aws_internet_gateway" "igw" {
 
 locals {
   az_suffixes = slice(data.aws_availability_zones.available.names, 0, var.az_count)
+  app_layers  = length(var.layer_names)
 }
 
 data "aws_availability_zones" "available" {
@@ -78,13 +79,13 @@ resource "aws_route_table" "public" {
 }
 
 resource "aws_subnet" "private" {
-  count             = var.az_count * var.app_layers
+  count             = var.az_count * local.app_layers
   vpc_id            = aws_vpc.main.id
   cidr_block        = cidrsubnet(var.vpc_cidr_block, var.subnet_mask_bits, (count.index * 2) + 1)
   availability_zone = element(data.aws_availability_zones.available.names, count.index % var.az_count)
 
   tags = merge(var.tags, {
-    Name = "${var.project_name}-private-${element(var.layer_names, count.index % var.app_layers)}-${substr(element(local.az_suffixes, count.index % var.az_count), -2, 2)}"
+    Name = "${var.project_name}-private-${element(var.layer_names, count.index % local.app_layers)}-${substr(element(local.az_suffixes, count.index % var.az_count), -2, 2)}"
   })
   depends_on = [aws_subnet.public]
 }
