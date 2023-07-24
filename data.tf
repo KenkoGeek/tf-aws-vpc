@@ -14,7 +14,7 @@ data "aws_iam_policy_document" "cw_logs_kms_policy" {
       identifiers = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"
     }
     actions   = ["kms:*"]
-    resources = [aws_kms_key.logs_cmk.arn]
+    resources = ["*"]
   }
 
   statement {
@@ -22,7 +22,7 @@ data "aws_iam_policy_document" "cw_logs_kms_policy" {
     effect = "Allow"
     principals {
       type        = "AWS"
-      identifiers = [data.aws_caller_identity.current.arn]
+      identifiers = ["*"]
     }
     actions = [
       "kms:Encrypt",
@@ -33,7 +33,7 @@ data "aws_iam_policy_document" "cw_logs_kms_policy" {
       "kms:ListGrants",
       "kms:DescribeKey"
     ]
-    resources = [aws_kms_key.logs_cmk.arn]
+    resources = ["*"]
   }
 
   statement {
@@ -50,7 +50,7 @@ data "aws_iam_policy_document" "cw_logs_kms_policy" {
       "kms:GenerateDataKey*",
       "kms:Describe*"
     ]
-    resources = [aws_kms_key.logs_cmk.arn]
+    resources = ["*"]
   }
 
 }
