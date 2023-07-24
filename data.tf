@@ -11,7 +11,7 @@ data "aws_iam_policy_document" "cw_logs_kms_policy" {
     effect = "Allow"
     principals {
       type        = "AWS"
-      identifiers = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"
+      identifiers = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"]
     }
     actions   = ["kms:*"]
     resources = ["*"]
@@ -22,7 +22,7 @@ data "aws_iam_policy_document" "cw_logs_kms_policy" {
     effect = "Allow"
     principals {
       type        = "AWS"
-      identifiers = ["*"]
+      identifiers = [data.aws_caller_identity.current.arn]
     }
     actions = [
       "kms:Encrypt",
@@ -35,7 +35,7 @@ data "aws_iam_policy_document" "cw_logs_kms_policy" {
     ]
     resources = ["*"]
   }
-
+  
   statement {
     sid    = "Use via CW Logs"
     effect = "Allow"
