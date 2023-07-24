@@ -30,12 +30,6 @@ locals {
   app_layers  = length(var.layer_names)
 }
 
-data "aws_availability_zones" "available" {
-  state = "available"
-}
-
-data "aws_caller_identity" "current" {}
-
 # Create subnets
 resource "aws_subnet" "public" {
   count             = var.az_count
@@ -258,40 +252,7 @@ resource "aws_kms_key" "flowlogs_kms_key" {
   tags = merge(var.tags, {
     Name = "${var.project_name}-flowlogs-kms-key"
   })
-  policy = <<EOF
-{
-  "Version": "2012-10-17",
-  "Id": "key-policy",
-  "Statement": [
-    {
-      "Sid": "AllowAdminToLocalAccount",
-      "Effect": "Allow",
-      "Principal": {
-        "AWS": "arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"
-      },
-      "Action": [
-        "kms:*"
-      ],
-      "Resource": "*"
-    },
-    {
-      "Sid": "AllowUseForCloudWatchLogs",
-      "Effect": "Allow",
-      "Principal": {
-        "Service": "logs.${var.aws_region}.amazonaws.com"
-      },
-      "Action": [
-        "kms:Encrypt*",
-        "kms:Decrypt*",
-        "kms:ReEncrypt*",
-        "kms:GenerateDataKey*",
-        "kms:Describe*"
-    ],
-      "Resource": "*"
-    }
-  ]
-}
-EOF
+  policy = data.aws_iam_policy_document.cw_logs_kms_policy.json
 }
 
 # Create CloudWatch Logs group for Flow Logs
