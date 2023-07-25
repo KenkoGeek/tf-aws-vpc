@@ -35,7 +35,7 @@ data "aws_iam_policy_document" "cw_logs_kms_policy" {
     ]
     resources = ["*"]
   }
-  
+
   statement {
     sid    = "Use via CW Logs"
     effect = "Allow"
