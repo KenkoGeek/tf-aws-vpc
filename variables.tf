@@ -18,6 +18,16 @@ variable "project_name" {
   }
 }
 
+variable "environment" {
+  type        = string
+  description = "Deployment Environment"
+  default     = "sandbox"
+  validation {
+    condition     = can(regex("^[a-z0-9-]+$", var.environment))
+    error_message = "Invalid environment name. Please provide a valid name using lowercase letters and hyphens (-)."
+  }
+}
+
 variable "vpc_cidr_block" {
   type        = string
   description = "CIDR block for the VPC"

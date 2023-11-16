@@ -1,11 +1,14 @@
-# terraform {
-#   backend "s3" {
-#     bucket = "my-terraform-state-bucket"
-#     key    = "my-terraform-state-key"
-#     region = var.aws_region
-#     # dynamodb_table = "my-terraform-state-lock"
-#   }
-# }
+locals {
+  az_suffixes = slice(data.aws_availability_zones.available.names, 0, var.az_count)
+  environment_map = {
+    development = "dev"
+    test        = "test"
+    production  = "prod"
+    staging     = "stg"
+    sandbox     = "sandbox"
+  }
+  app_layers = length(var.layer_names)
+}
 
 # Create VPC
 resource "aws_vpc" "main" {
@@ -13,7 +16,8 @@ resource "aws_vpc" "main" {
   enable_dns_hostnames = true
   enable_dns_support   = true
   tags = merge(var.tags, {
-    Name = "${var.project_name}-vpc"
+    Name        = "${var.project_name}-${local.environment_map[var.environment]}-vpc"
+    environment = var.environment
   })
 }
 
@@ -21,24 +25,28 @@ resource "aws_vpc" "main" {
 resource "aws_internet_gateway" "igw" {
   vpc_id = aws_vpc.main.id
   tags = merge(var.tags, {
-    Name = "${var.project_name}-igw"
+    Name        = "${var.project_name}-${local.environment_map[var.environment]}-igw"
+    environment = var.environment
   })
 }
 
-locals {
-  az_suffixes = slice(data.aws_availability_zones.available.names, 0, var.az_count)
-  app_layers  = length(var.layer_names)
+data "aws_availability_zones" "available" {
+  state = "available"
 }
+
+data "aws_caller_identity" "current" {}
 
 # Create subnets
 resource "aws_subnet" "public" {
-  count             = var.az_count
-  vpc_id            = aws_vpc.main.id
-  cidr_block        = cidrsubnet(var.vpc_cidr_block, var.subnet_mask_bits, count.index * 2)
-  availability_zone = element(data.aws_availability_zones.available.names, count.index)
+  count                   = var.az_count
+  vpc_id                  = aws_vpc.main.id
+  cidr_block              = cidrsubnet(var.vpc_cidr_block, var.subnet_mask_bits, count.index * 2)
+  availability_zone       = element(data.aws_availability_zones.available.names, count.index)
+  map_public_ip_on_launch = false
 
   tags = merge(var.tags, {
-    Name = "${var.project_name}-public-${substr(element(local.az_suffixes, count.index), -2, 2)}"
+    Name        = "${var.project_name}-${local.environment_map[var.environment]}-public-${substr(element(local.az_suffixes, count.index), -2, 2)}"
+    environment = var.environment
   })
 }
 
@@ -50,7 +58,8 @@ resource "aws_route_table_association" "public_subnet_association" {
 }
 
 resource "aws_route_table" "public" {
-  count = var.use_transit_gateway ? 1 : var.nat_gateway_count
+  depends_on = [aws_ec2_transit_gateway_vpc_attachment.vpc_attachment]
+  count      = var.use_transit_gateway ? 1 : var.nat_gateway_count
 
   vpc_id = aws_vpc.main.id
 
@@ -68,7 +77,8 @@ resource "aws_route_table" "public" {
   }
 
   tags = merge(var.tags, {
-    Name = "${var.project_name}-public-route-table"
+    Name        = "${var.project_name}-${local.environment_map[var.environment]}-public-route-table"
+    environment = var.environment
   })
 }
 
@@ -79,12 +89,14 @@ resource "aws_subnet" "private" {
   availability_zone = element(data.aws_availability_zones.available.names, count.index % var.az_count)
 
   tags = merge(var.tags, {
-    Name = "${var.project_name}-private-${element(var.layer_names, count.index % local.app_layers)}-${substr(element(local.az_suffixes, count.index % var.az_count), -2, 2)}"
+    Name        = "${var.project_name}-${local.environment_map[var.environment]}-private-${element(var.layer_names, floor(count.index / local.app_layers))}-${substr(element(local.az_suffixes, count.index % var.az_count), -2, 2)}"
+    environment = var.environment
   })
   depends_on = [aws_subnet.public]
 }
 
 resource "aws_ec2_transit_gateway_vpc_attachment" "vpc_attachment" {
+  depends_on         = [aws_vpc.main]
   count              = var.use_transit_gateway ? 1 : 0
   subnet_ids         = [aws_subnet.private[0].id, aws_subnet.private[1].id]
   transit_gateway_id = var.transit_gateway_id
@@ -103,7 +115,8 @@ resource "aws_nat_gateway" "nat_gateway" {
     aws_subnet.public
   ]
   tags = merge(var.tags, {
-    Name = "${var.project_name}-nat-gateway-${substr(element(local.az_suffixes, count.index), -2, 2)}"
+    Name        = "${var.project_name}-${local.environment_map[var.environment]}-nat-gateway-${substr(element(local.az_suffixes, count.index), -2, 2)}"
+    environment = var.environment
   })
 }
 
@@ -111,13 +124,15 @@ resource "aws_eip" "nat_eip" {
   count = var.use_transit_gateway == false && var.use_nat_gateway ? var.nat_gateway_count : 0
 
   tags = merge(var.tags, {
-    Name = "${var.project_name}-nat-eip-${count.index}"
+    Name        = "${var.project_name}-${local.environment_map[var.environment]}-nat-eip-${count.index}"
+    environment = var.environment
   })
 }
 
 # Create private route table and associate with private subnets
 resource "aws_route_table" "private" {
-  count = var.use_transit_gateway ? 1 : var.nat_gateway_count
+  depends_on = [aws_ec2_transit_gateway_vpc_attachment.vpc_attachment]
+  count      = var.use_transit_gateway ? 1 : var.nat_gateway_count
 
   vpc_id = aws_vpc.main.id
 
@@ -138,20 +153,20 @@ resource "aws_route_table" "private" {
   }
 
   tags = merge(var.tags, {
-    Name = "${var.project_name}-private-route-table"
+    Name        = "${var.project_name}-${local.environment_map[var.environment]}-private-route-table"
+    environment = var.environment
   })
-  depends_on = [aws_ec2_transit_gateway_vpc_attachment.vpc_attachment]
 }
 
 resource "aws_route_table_association" "private_subnet_association" {
-  count          = var.az_count
+  count          = var.az_count * local.app_layers
   subnet_id      = aws_subnet.private[count.index].id
-  route_table_id = aws_route_table.private[0].id
+  route_table_id = aws_route_table.private[var.nat_gateway_count == 1 ? 0 : count.index % var.nat_gateway_count].id
 }
 
 # Create security group VPC Endpoint
 resource "aws_security_group" "vpc_endpoint_sg" {
-  name        = "${var.project_name}-vpc-endpoint-sg"
+  name        = "${var.project_name}-${local.environment_map[var.environment]}-vpc-endpoint-sg"
   description = "Security group for VPC endpoints"
 
   vpc_id = aws_vpc.main.id
@@ -173,7 +188,8 @@ resource "aws_security_group" "vpc_endpoint_sg" {
   }
 
   tags = merge(var.tags, {
-    Name = "${var.project_name}-vpc-endpoint-sg"
+    Name        = "${var.project_name}-${local.environment_map[var.environment]}-vpc-endpoint-sg"
+    environment = var.environment
   })
 }
 
@@ -184,7 +200,8 @@ resource "aws_vpc_endpoint" "s3_vpc_endpoint" {
   vpc_id       = aws_vpc.main.id
   service_name = "com.amazonaws.${var.aws_region}.s3"
   tags = merge(var.tags, {
-    Name = "${var.project_name}-s3-vpc-endpoint"
+    Name        = "${var.project_name}-${local.environment_map[var.environment]}-s3-vpc-endpoint"
+    environment = var.environment
   })
 }
 
@@ -194,7 +211,8 @@ resource "aws_vpc_endpoint" "dynamodb_vpc_endpoint" {
   vpc_id       = aws_vpc.main.id
   service_name = "com.amazonaws.${var.aws_region}.dynamodb"
   tags = merge(var.tags, {
-    Name = "${var.project_name}-dynamodb-vpc-endpoint"
+    Name        = "${var.project_name}-${local.environment_map[var.environment]}-dynamodb-vpc-endpoint"
+    environment = var.environment
   })
 }
 
@@ -209,7 +227,8 @@ resource "aws_vpc_endpoint" "ec2_vpc_endpoint" {
     aws_security_group.vpc_endpoint_sg.id
   ]
   tags = merge(var.tags, {
-    Name = "${var.project_name}-ec2-vpc-endpoint"
+    Name        = "${var.project_name}-${local.environment_map[var.environment]}-ec2-vpc-endpoint"
+    environment = var.environment
   })
 }
 
@@ -224,7 +243,8 @@ resource "aws_vpc_endpoint" "ssm_vpc_endpoint" {
     aws_security_group.vpc_endpoint_sg.id
   ]
   tags = merge(var.tags, {
-    Name = "${var.project_name}-ssm-vpc-endpoint"
+    Name        = "${var.project_name}-${local.environment_map[var.environment]}-ssm-vpc-endpoint"
+    environment = var.environment
   })
 }
 
@@ -239,7 +259,8 @@ resource "aws_vpc_endpoint" "ssmmessages_vpc_endpoint" {
     aws_security_group.vpc_endpoint_sg.id
   ]
   tags = merge(var.tags, {
-    Name = "${var.project_name}-ssmmessages-vpc-endpoint"
+    Name        = "${var.project_name}-${local.environment_map[var.environment]}-ssmmessages-vpc-endpoint"
+    environment = var.environment
   })
 }
 
@@ -250,19 +271,59 @@ resource "aws_kms_key" "flowlogs_kms_key" {
   enable_key_rotation     = true
 
   tags = merge(var.tags, {
-    Name = "${var.project_name}-flowlogs-kms-key"
+    Name        = "${var.project_name}-${local.environment_map[var.environment]}-flowlogs-kms-key"
+    environment = var.environment
   })
-  policy = data.aws_iam_policy_document.cw_logs_kms_policy.json
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Id": "key-policy",
+  "Statement": [
+    {
+      "Sid": "AllowAdminToLocalAccount",
+      "Effect": "Allow",
+      "Principal": {
+        "AWS": "arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"
+      },
+      "Action": [
+        "kms:*"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "AllowUseForCloudWatchLogs",
+      "Effect": "Allow",
+      "Principal": {
+        "Service": "logs.${var.aws_region}.amazonaws.com"
+      },
+      "Action": [
+        "kms:Encrypt*",
+        "kms:Decrypt*",
+        "kms:ReEncrypt*",
+        "kms:GenerateDataKey*",
+        "kms:Describe*"
+    ],
+      "Resource": "*"
+    }
+  ]
+}
+EOF
+}
+
+resource "aws_kms_alias" "key_alias" {
+  name          = "alias/${var.project_name}-${var.environment}-flowlogs-key"
+  target_key_id = aws_kms_key.flowlogs_kms_key.key_id
 }
 
 # Create CloudWatch Logs group for Flow Logs
 resource "aws_cloudwatch_log_group" "flowlogs_log_group" {
   name              = "/vpc/${var.project_name}/flowlogs"
-  retention_in_days = 90
+  retention_in_days = 365
   kms_key_id        = aws_kms_key.flowlogs_kms_key.arn
 
   tags = merge(var.tags, {
-    Name = "${var.project_name}-flowlogs-log-group"
+    Name        = "${var.project_name}-${local.environment_map[var.environment]}-flowlogs-log-group"
+    environment = var.environment
   })
 }
 
@@ -278,7 +339,7 @@ resource "aws_flow_log" "flowlogs" {
 
 # Create IAM Role for Flow Logs
 resource "aws_iam_role" "flowlogs_role" {
-  name               = "${var.project_name}-flowlogs-role"
+  name               = "${var.project_name}-${local.environment_map[var.environment]}-flowlogs-role"
   assume_role_policy = <<EOF
 {
   "Version": "2012-10-17",
@@ -295,6 +356,7 @@ resource "aws_iam_role" "flowlogs_role" {
 EOF
 
   tags = merge(var.tags, {
-    Name = "${var.project_name}-flowlogs-role"
+    Name        = "${var.project_name}-flowlogs-role"
+    environment = var.environment
   })
 }

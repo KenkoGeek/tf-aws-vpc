@@ -62,6 +62,7 @@ No modules.
 | [aws_flow_log.flowlogs](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/flow_log) | resource |
 | [aws_iam_role.flowlogs_role](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
 | [aws_internet_gateway.igw](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/internet_gateway) | resource |
+| [aws_kms_alias.key_alias](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/kms_alias) | resource |
 | [aws_kms_key.flowlogs_kms_key](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/kms_key) | resource |
 | [aws_nat_gateway.nat_gateway](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/nat_gateway) | resource |
 | [aws_route_table.private](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/route_table) | resource |
@@ -90,6 +91,7 @@ No modules.
 | <a name="input_az_count"></a> [az\_count](#input\_az\_count) | Number of availability zones | `number` | `2` | no |
 | <a name="input_dynamodb_vpc_endpoint_enabled"></a> [dynamodb\_vpc\_endpoint\_enabled](#input\_dynamodb\_vpc\_endpoint\_enabled) | Flag to enable/disable DynamoDB VPC Endpoint | `bool` | `true` | no |
 | <a name="input_ec2_vpc_endpoint_enabled"></a> [ec2\_vpc\_endpoint\_enabled](#input\_ec2\_vpc\_endpoint\_enabled) | Flag to enable/disable EC2 VPC Endpoint | `bool` | `false` | no |
+| <a name="input_environment"></a> [environment](#input\_environment) | Deployment Environment | `string` | `"sandbox"` | no |
 | <a name="input_layer_names"></a> [layer\_names](#input\_layer\_names) | Names for each application layer | `list(string)` | <pre>[<br>  "app",<br>  "database"<br>]</pre> | no |
 | <a name="input_nat_gateway_count"></a> [nat\_gateway\_count](#input\_nat\_gateway\_count) | Number of NAT Gateways | `number` | `1` | no |
 | <a name="input_project_name"></a> [project\_name](#input\_project\_name) | Name of the project | `string` | `"my-project"` | no |
