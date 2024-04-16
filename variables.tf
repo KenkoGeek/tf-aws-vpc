@@ -1,5 +1,5 @@
 variable "aws_region" {
-  description = "AWS region where the EC2 instance will be deployed"
+  description = "AWS region where the VPC will be deployed"
   type        = string
   default     = "us-east-1"
   validation {
@@ -43,8 +43,8 @@ variable "subnet_mask_bits" {
   description = "Number of bits for subnet mask"
   default     = 8
   validation {
-    condition     = var.subnet_mask_bits >= 4 && var.subnet_mask_bits <= 14
-    error_message = "Subnet mask bits must be between 5 and 14"
+    condition     = var.subnet_mask_bits >= 1 && var.subnet_mask_bits <= 14
+    error_message = "Subnet mask bits must be between 1 and 14"
   }
 }
 
@@ -56,6 +56,12 @@ variable "az_count" {
     condition     = var.az_count >= 2 && var.az_count <= 3
     error_message = "Availability zone count must be between 2 and 3"
   }
+}
+
+variable "app_layers" {
+  description = "Number of application layers"
+  type        = number
+  default     = 2
 }
 
 variable "layer_names" {
@@ -111,7 +117,7 @@ variable "dynamodb_vpc_endpoint_enabled" {
 variable "ec2_vpc_endpoint_enabled" {
   type        = bool
   description = "Flag to enable/disable EC2 VPC Endpoint"
-  default     = false
+  default     = true
 }
 
 variable "ssm_vpc_endpoint_enabled" {
@@ -136,7 +142,6 @@ variable "tags" {
   type        = map(string)
   description = "Tags to apply to AWS resources"
   default = {
-    Environment = "Development"
-    Owner       = "Frankin Garcia"
+    owner = "Frankin Garcia"
   }
 }

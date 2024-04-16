@@ -1,3 +1,12 @@
+# terraform {
+#   backend "s3" {
+#     bucket = "my-terraform-state-bucket"
+#     key    = "my-terraform-state-key"
+#     region = var.aws_region
+#     # dynamodb_table = "my-terraform-state-lock"
+#   }
+# }
+
 locals {
   az_suffixes = slice(data.aws_availability_zones.available.names, 0, var.az_count)
   environment_map = {
@@ -7,7 +16,6 @@ locals {
     staging     = "stg"
     sandbox     = "sandbox"
   }
-  app_layers = length(var.layer_names)
 }
 
 # Create VPC
@@ -38,9 +46,10 @@ data "aws_caller_identity" "current" {}
 
 # Create subnets
 resource "aws_subnet" "public" {
-  count                   = var.az_count
+  count = var.az_count
+
   vpc_id                  = aws_vpc.main.id
-  cidr_block              = cidrsubnet(var.vpc_cidr_block, var.subnet_mask_bits, count.index * 2)
+  cidr_block              = cidrsubnet(var.vpc_cidr_block, var.subnet_mask_bits, count.index)
   availability_zone       = element(data.aws_availability_zones.available.names, count.index)
   map_public_ip_on_launch = false
 
@@ -83,13 +92,14 @@ resource "aws_route_table" "public" {
 }
 
 resource "aws_subnet" "private" {
-  count             = var.az_count * local.app_layers
+  count = var.az_count * var.app_layers
+
+  cidr_block        = count.index == 0 ? cidrsubnet(aws_vpc.main.cidr_block, var.subnet_mask_bits, var.az_count + count.index * var.app_layers) : count.index > 0 ? cidrsubnet(aws_vpc.main.cidr_block, var.subnet_mask_bits, count.index + var.az_count) : null
   vpc_id            = aws_vpc.main.id
-  cidr_block        = cidrsubnet(var.vpc_cidr_block, var.subnet_mask_bits, (count.index * 2) + 1)
   availability_zone = element(data.aws_availability_zones.available.names, count.index % var.az_count)
 
   tags = merge(var.tags, {
-    Name        = "${var.project_name}-${local.environment_map[var.environment]}-private-${element(var.layer_names, floor(count.index / local.app_layers))}-${substr(element(local.az_suffixes, count.index % var.az_count), -2, 2)}"
+    Name        = "${var.project_name}-${local.environment_map[var.environment]}-private-${element(var.layer_names, floor(count.index / var.app_layers))}-${substr(element(local.az_suffixes, count.index % var.az_count), -2, 2)}"
     environment = var.environment
   })
   depends_on = [aws_subnet.public]
@@ -159,7 +169,7 @@ resource "aws_route_table" "private" {
 }
 
 resource "aws_route_table_association" "private_subnet_association" {
-  count          = var.az_count * local.app_layers
+  count          = var.az_count * var.app_layers
   subnet_id      = aws_subnet.private[count.index].id
   route_table_id = aws_route_table.private[var.nat_gateway_count == 1 ? 0 : count.index % var.nat_gateway_count].id
 }
