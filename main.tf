@@ -108,7 +108,7 @@ resource "aws_subnet" "private" {
 resource "aws_ec2_transit_gateway_vpc_attachment" "vpc_attachment" {
   depends_on         = [aws_vpc.main]
   count              = var.use_transit_gateway ? 1 : 0
-  subnet_ids         = [aws_subnet.private[0].id, aws_subnet.private[1].id]
+  subnet_ids         = [for az in range(var.az_count) : aws_subnet.private[az].id]
   transit_gateway_id = var.transit_gateway_id
   vpc_id             = aws_vpc.main.id
 }
