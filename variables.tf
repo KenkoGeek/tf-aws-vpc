@@ -11,7 +11,7 @@ variable "aws_region" {
 variable "project_name" {
   type        = string
   description = "Name of the project"
-  default     = "my-project"
+  default     = "my-projec-1"
   validation {
     condition     = can(regex("^[a-z0-9-]+$", var.project_name))
     error_message = "Invalid project name. Please provide a valid name using lowercase letters and hyphens (-)."
@@ -38,13 +38,23 @@ variable "vpc_cidr_block" {
   }
 }
 
-variable "subnet_mask_bits" {
+variable "public_subnet_mask_bits" {
   type        = number
   description = "Number of bits for subnet mask"
-  default     = 8
+  default     = 10 # Example: /16 + 10 = /26
   validation {
-    condition     = var.subnet_mask_bits >= 1 && var.subnet_mask_bits <= 14
+    condition     = var.public_subnet_mask_bits >= 1 && var.public_subnet_mask_bits <= 14
     error_message = "Subnet mask bits must be between 1 and 14"
+  }
+}
+
+variable "subnet_layers" {
+  description = "Map of subnet layers to their corresponding newbits to extend the VPC CIDR block"
+  type        = map(number)
+  default = {
+    app      = 7  # Example: /16 + 7 = /23
+    dmz      = 12 # Example: /16 + 12 = /28
+    database = 12 # Example: /16 + 10 = /28
   }
 }
 
@@ -56,18 +66,6 @@ variable "az_count" {
     condition     = var.az_count >= 2 && var.az_count <= 3
     error_message = "Availability zone count must be between 2 and 3"
   }
-}
-
-variable "app_layers" {
-  description = "Number of application layers"
-  type        = number
-  default     = 2
-}
-
-variable "layer_names" {
-  description = "Names for each application layer"
-  type        = list(string)
-  default     = ["app", "database"]
 }
 
 variable "use_nat_gateway" {

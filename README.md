@@ -87,19 +87,18 @@ No modules.
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_additional_cidrs"></a> [additional\_cidrs](#input\_additional\_cidrs) | Additional CIDR blocks for routing (comma-separated) | `string` | `""` | no |
-| <a name="input_app_layers"></a> [app\_layers](#input\_app\_layers) | Number of application layers | `number` | `2` | no |
 | <a name="input_aws_region"></a> [aws\_region](#input\_aws\_region) | AWS region where the VPC will be deployed | `string` | `"us-east-1"` | no |
 | <a name="input_az_count"></a> [az\_count](#input\_az\_count) | Number of availability zones | `number` | `2` | no |
 | <a name="input_dynamodb_vpc_endpoint_enabled"></a> [dynamodb\_vpc\_endpoint\_enabled](#input\_dynamodb\_vpc\_endpoint\_enabled) | Flag to enable/disable DynamoDB VPC Endpoint | `bool` | `true` | no |
 | <a name="input_ec2_vpc_endpoint_enabled"></a> [ec2\_vpc\_endpoint\_enabled](#input\_ec2\_vpc\_endpoint\_enabled) | Flag to enable/disable EC2 VPC Endpoint | `bool` | `true` | no |
 | <a name="input_environment"></a> [environment](#input\_environment) | Deployment Environment | `string` | `"sandbox"` | no |
-| <a name="input_layer_names"></a> [layer\_names](#input\_layer\_names) | Names for each application layer | `list(string)` | <pre>[<br>  "app",<br>  "database"<br>]</pre> | no |
 | <a name="input_nat_gateway_count"></a> [nat\_gateway\_count](#input\_nat\_gateway\_count) | Number of NAT Gateways | `number` | `1` | no |
-| <a name="input_project_name"></a> [project\_name](#input\_project\_name) | Name of the project | `string` | `"my-project"` | no |
+| <a name="input_project_name"></a> [project\_name](#input\_project\_name) | Name of the project | `string` | `"my-projec-1"` | no |
+| <a name="input_public_subnet_mask_bits"></a> [public\_subnet\_mask\_bits](#input\_public\_subnet\_mask\_bits) | Number of bits for subnet mask | `number` | `10` | no |
 | <a name="input_s3_vpc_endpoint_enabled"></a> [s3\_vpc\_endpoint\_enabled](#input\_s3\_vpc\_endpoint\_enabled) | Flag to enable/disable S3 VPC Endpoint | `bool` | `true` | no |
 | <a name="input_ssm_vpc_endpoint_enabled"></a> [ssm\_vpc\_endpoint\_enabled](#input\_ssm\_vpc\_endpoint\_enabled) | Flag to enable/disable SSM VPC Endpoint | `bool` | `false` | no |
 | <a name="input_ssmmessages_vpc_endpoint_enabled"></a> [ssmmessages\_vpc\_endpoint\_enabled](#input\_ssmmessages\_vpc\_endpoint\_enabled) | Flag to enable/disable SSM Messages VPC Endpoint | `bool` | `false` | no |
-| <a name="input_subnet_mask_bits"></a> [subnet\_mask\_bits](#input\_subnet\_mask\_bits) | Number of bits for subnet mask | `number` | `8` | no |
+| <a name="input_subnet_layers"></a> [subnet\_layers](#input\_subnet\_layers) | Map of subnet layers to their corresponding newbits to extend the VPC CIDR block | `map(number)` | <pre>{<br>  "app": 7,<br>  "database": 12,<br>  "dmz": 12<br>}</pre> | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | Tags to apply to AWS resources | `map(string)` | <pre>{<br>  "owner": "Frankin Garcia"<br>}</pre> | no |
 | <a name="input_transit_gateway_id"></a> [transit\_gateway\_id](#input\_transit\_gateway\_id) | ID of the Transit Gateway | `string` | `"tgw-1234567890abcdef1"` | no |
 | <a name="input_use_nat_gateway"></a> [use\_nat\_gateway](#input\_use\_nat\_gateway) | Flag to enable/disable NAT Gateways | `bool` | `true` | no |

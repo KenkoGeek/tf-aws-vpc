@@ -1,20 +1,20 @@
-additional_cidrs              = ""
-app_layers                    = 2
-aws_region                    = "us-east-1"
-az_count                      = 2
-dynamodb_vpc_endpoint_enabled = true
-ec2_vpc_endpoint_enabled      = true
-environment                   = "sandbox"
-layer_names = [
-  "app",
-  "database"
-]
+additional_cidrs                 = ""
+aws_region                       = "us-east-1"
+az_count                         = 2
+dynamodb_vpc_endpoint_enabled    = true
+ec2_vpc_endpoint_enabled         = true
+environment                      = "sandbox"
 nat_gateway_count                = 1
-project_name                     = "my-project"
+project_name                     = "my-projec-1"
+public_subnet_mask_bits          = 10
 s3_vpc_endpoint_enabled          = true
 ssm_vpc_endpoint_enabled         = false
 ssmmessages_vpc_endpoint_enabled = false
-subnet_mask_bits                 = 8
+subnet_layers = {
+  "app": 7,
+  "database": 12,
+  "dmz": 12
+}
 tags = {
   "owner": "Frankin Garcia"
 }
