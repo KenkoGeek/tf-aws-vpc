@@ -39,7 +39,7 @@ terraform fmt
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | 5.3.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | = 5.3.0 |
 
 ## Requirements
 
@@ -63,7 +63,7 @@ No modules.
 | [aws_iam_role.flowlogs_role](https://registry.terraform.io/providers/hashicorp/aws/5.3.0/docs/resources/iam_role) | resource |
 | [aws_internet_gateway.igw](https://registry.terraform.io/providers/hashicorp/aws/5.3.0/docs/resources/internet_gateway) | resource |
 | [aws_kms_alias.key_alias](https://registry.terraform.io/providers/hashicorp/aws/5.3.0/docs/resources/kms_alias) | resource |
-| [aws_kms_key.flowlogs_kms_key](https://registry.terraform.io/providers/hashicorp/aws/5.3.0/docs/resources/kms_key) | resource |
+| [aws_kms_key.logs_kms_key](https://registry.terraform.io/providers/hashicorp/aws/5.3.0/docs/resources/kms_key) | resource |
 | [aws_nat_gateway.nat_gateway](https://registry.terraform.io/providers/hashicorp/aws/5.3.0/docs/resources/nat_gateway) | resource |
 | [aws_route_table.private](https://registry.terraform.io/providers/hashicorp/aws/5.3.0/docs/resources/route_table) | resource |
 | [aws_route_table.public](https://registry.terraform.io/providers/hashicorp/aws/5.3.0/docs/resources/route_table) | resource |

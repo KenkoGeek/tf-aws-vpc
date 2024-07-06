@@ -279,8 +279,8 @@ resource "aws_vpc_endpoint" "ssmmessages_vpc_endpoint" {
 }
 
 # Create KMS CMK for Flow Logs encryption
-resource "aws_kms_key" "flowlogs_kms_key" {
-  description             = "KMS CMK for Flow Logs encryption"
+resource "aws_kms_key" "logs_kms_key" {
+  description             = "KMS CMK for Logs encryption"
   deletion_window_in_days = 7
   enable_key_rotation     = true
 
@@ -325,7 +325,7 @@ EOF
 }
 
 resource "aws_kms_alias" "key_alias" {
-  name          = "alias/${var.project_name}-${var.environment}-flowlogs-key"
+  name          = "alias/${var.project_name}/${var.environment}/logs"
   target_key_id = aws_kms_key.flowlogs_kms_key.key_id
 }
 
@@ -361,7 +361,7 @@ resource "aws_iam_role" "flowlogs_role" {
     {
       "Effect": "Allow",
       "Principal": {
-        "Service": "vpc-flow-logs.amazonaws.com"
+        "Service": "logs.amazonaws.com"
       },
       "Action": "sts:AssumeRole"
     }
